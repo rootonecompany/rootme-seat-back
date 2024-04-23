@@ -1,4 +1,4 @@
-import { Injectable, NotAcceptableException, NotFoundException } from "@nestjs/common";
+import { Injectable, NotAcceptableException } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { Order } from "src/yanolja/entities/order.entity";
 import { DataSource, Repository } from "typeorm";
@@ -87,7 +87,7 @@ export class OrderService {
             .getOne();
 
         if (!returnMyOrder) {
-            throw new NotFoundException("예매한 좌석이 없습니다.");
+            return {};
         }
 
         const dates = returnMyOrder.theater.dates;
