@@ -17,16 +17,6 @@ export type MyOrderBodyType = OrderQueryType & {
 export class OrderController {
     constructor(private readonly orderService: OrderService) {}
 
-    // @Get()
-    // async getOrderAll(): Promise<Order[]> {
-    //     return await this.orderaService.getOrderAll();
-    // }
-
-    // @Get()
-    // public async isOrder(@Query() query: OrderQueryType) {
-    //     return await this.orderService.isOrder(query);
-    // }
-
     @Post()
     public async isOrder(@Body() body: MyOrderBodyType) {
         return await this.orderService.isOrder(body);

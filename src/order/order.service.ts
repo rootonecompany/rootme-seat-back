@@ -28,19 +28,6 @@ export class OrderService {
         } catch (error) {
             throw new NotAcceptableException("잘못된 주문번호 입니다.");
         }
-
-        // if (await this.isOrder(orderNum)) {
-        //     // 주문 테이블 좌석 테이블 조인
-        //     return await this.orderRepository
-        //         .createQueryBuilder("order")
-        //         .leftJoinAndSelect("order.seats", "seat")
-        //         .where("order.orderNumber = :orderNum", { orderNum })
-        //         .getMany();
-        // } else {
-        //     throw new NotFoundException(`주문번호로 좌석이 예약되지 않았습니다.`, {
-        //         cause: orderNum,
-        //     });
-        // }
     }
 
     public async getMyOrder(body: MyOrderBodyType) {

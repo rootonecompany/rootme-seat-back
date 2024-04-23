@@ -6,11 +6,6 @@ export const wanderlustTypeOrmConfig = (configService: ConfigService) => {
         throw Error("development 또는 production 환경이어야 합니다.");
     }
 
-    // console.log(
-    //     "wanderlustTypeOrmConfig:",
-    //     process.cwd() + "/dist/wanderlust/" + "/**/*.entity.{js,ts}",
-    // );
-
     const option: TypeOrmModuleOptions = {
         type: configService.get<"mysql">("wanderlust.type"),
         host: configService.get<string>("wanderlust.host"),

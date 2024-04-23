@@ -35,79 +35,6 @@ export class TheaterService {
         private readonly db: DataSource,
     ) {}
 
-    /** ============================================================================
-     * old function
-     */
-    // async getDates(theaterCode: string) {
-    //     const dates = await this.theaterRepository
-    //         .createQueryBuilder("theater")
-    //         .leftJoinAndSelect("theater.dates", "dates")
-    //         .where("theater.theaterCode = :theaterCode", { theaterCode })
-    //         .andWhere("dates.state = 1")
-    //         .limit(14)
-    //         .getMany();
-
-    //     return dates;
-    // }
-
-    // async getTimes(query: dateQueryType) {
-    //     const times = await this.theaterRepository
-    //         .createQueryBuilder("theater")
-    //         .leftJoinAndSelect("theater.dates", "dates")
-    //         .leftJoinAndSelect("theater.seats", "seats")
-    //         .select([
-    //             "any_value(dates.id) as id",
-    //             "count(dates.time) - (select count(dateId) from yanolja_order t where t.dateId = any_value(dates.id)) as count",
-    //             "any_value(dates.date) as date",
-    //             "any_value(dates.time) as time",
-    //         ])
-    //         .where("theater.theaterCode = :theaterCode", { theaterCode: query.theaterCode })
-    //         .andWhere("dates.date = :date", { date: query.date })
-    //         .andWhere("seats.state = 1")
-    //         .groupBy("dates.time")
-    //         .orderBy("dates.time")
-    //         .getRawMany();
-
-    //     return times;
-    // }
-
-    // async getSeats(theaterCode: string) {
-    //     const result = await this.theaterRepository
-    //         .createQueryBuilder("theater")
-    //         .leftJoinAndSelect("theater.seats", "seats")
-    //         .where("theater.theaterCode = :theaterCode", { theaterCode })
-    //         .getMany();
-
-    //     const rowNames = Array.from(new Set(result[0].seats.map((seat) => seat.rowName)));
-
-    //     const resultArr = rowNames.map((rowName) => {
-    //         const temp = result[0].seats.filter((name) => rowName === name.rowName);
-    //         return {
-    //             columnName: rowName,
-    //             seats: temp,
-    //         };
-    //         // return {
-    //         //     columnName: rowName,
-    //         //     seats: result[0].seats.filter((name) => {
-    //         //         if (name.rowName === rowName) {
-    //         //             return {
-    //         //                 id: name.id,
-    //         //                 name: name.name,
-    //         //                 state: name.state,
-    //         //             };
-    //         //         } else {
-    //         //             return;
-    //         //         }
-    //         //     }),
-    //         // };
-    //     });
-
-    //     return resultArr;
-    // }
-    /**
-     * ============================================================================
-     */
-
     public async insertTheaterInfos(body: InsertTheaterBodyType) {
         const execute = await this.theaterRepository
             .createQueryBuilder("theater")
@@ -208,7 +135,6 @@ export class TheaterService {
     public async insertCustomRows(body: InsertRowBodyType) {
         let result: any;
 
-        // createQueryBuilder =======================================================================
         const returnTheaterId = await this.theaterRepository
             .createQueryBuilder("theater")
             .leftJoinAndSelect("theater.dates", "dates")
@@ -220,9 +146,7 @@ export class TheaterService {
         const timeIds = returnTheaterId.flatMap((theaterId) =>
             theaterId.dates.flatMap((dateId) => dateId.times.flatMap((timeId) => timeId.id)),
         );
-        // ===========================================================================================
 
-        // rawQuery ==================================================================================
         // const rawQuery = `
         //     select c.id
         //     from yanolja_theater a
@@ -233,7 +157,6 @@ export class TheaterService {
         //     where a.id = ${body.theaterId}
         // `;
         // const timeIds = await this.theaterRepository.query(rawQuery);
-        // ===========================================================================================
 
         const queryRunner = this.db.createQueryRunner();
         await queryRunner.connect();
@@ -272,24 +195,6 @@ export class TheaterService {
 
         let result: any;
 
-        // createQueryBuilder =======================================================================
-        // const returnTheaterId = await this.theaterRepository
-        //     .createQueryBuilder("theater")
-        //     .leftJoinAndSelect("theater.dates", "dates")
-        //     .leftJoinAndSelect("dates.times", "times")
-        //     .leftJoinAndSelect("times.rows", "rows")
-        //     .select(["theater.id", "dates.id", "times.id", "rows.id"])
-        //     .where("theater.id = :theaterId", { theaterId: body.theaterId })
-        //     .getMany();
-
-        // const rowIds = returnTheaterId.flatMap((theaterId) =>
-        //     theaterId.dates.flatMap((dateId) =>
-        //         dateId.times.flatMap((timeId) => timeId.rows.flatMap((rowId) => rowId.id)),
-        //     ),
-        // );
-        // ===========================================================================================
-
-        // rawQuery ==================================================================================
         // const rawQuery = `
         //     select d.id
         //     from yanolja_theater a
@@ -302,44 +207,16 @@ export class TheaterService {
         //     where a.id = ${body.theaterId}
         // `;
         // const timeIds = await this.theaterRepository.query(rawQuery);
-        // ===========================================================================================
 
         const queryRunner = this.db.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
 
         try {
-            // 1. call procedure - 42.065s / postman - 42.10s ============================================
             const rawQuery = `call loopInsertSeat(${body.endOfRowCount}, ${body.theaterId})`;
             const execute = await this.theaterRepository.query(rawQuery);
 
             result = execute;
-            // ========================================================================================
-
-            // 2. back-end processing ====================================================================
-            // const names = [
-            //     ...Array(body.endOfRowCount)
-            //         .fill(1)
-            //         .map((value, index) => "" + (index + 1)),
-            // ];
-
-            // const insertSeats = rowIds.flatMap((rowId) => {
-            //     return names.map((name) => {
-            //         return {
-            //             name,
-            //             rowId,
-            //         };
-            //     });
-            // });
-
-            // const execute = await queryRunner.manager
-            //     .createQueryBuilder()
-            //     .insert()
-            //     .into(Seat, ["name", "rowId"])
-            //     .values(insertSeats)
-            //     .execute();
-            // result = insertSeats;
-            // ========================================================================================
 
             await queryRunner.commitTransaction();
         } catch (error) {
@@ -351,32 +228,6 @@ export class TheaterService {
 
         return result;
     }
-
-    // public async insertCustomRows_loopInsertRow_call_from_back(body: RowBodyType) {
-    //     const result: any[] = [];
-
-    //     const queryRunner = this.db.createQueryRunner();
-    //     await queryRunner.connect();
-    //     await queryRunner.startTransaction();
-
-    //     try {
-    //         for await (const [value] of body.rows) {
-    //             console.log("🚀 ~ TheaterService ~ forawait ~ value:", value);
-    //             const rawQuery = `call loopInsertRow_call_from_back("${value}", 1)`;
-    //             const execute = await this.theaterRepository.query(rawQuery);
-    //             result.push(execute);
-    //         }
-
-    //         await queryRunner.commitTransaction();
-    //     } catch (error) {
-    //         console.log("🚀 ~ TheaterService ~ insertCustomRows ~ error:", error);
-    //         await queryRunner.rollbackTransaction();
-    //     } finally {
-    //         await queryRunner.release();
-    //     }
-    //     console.log("🚀 ~ TheaterService ~ insertCustomRows ~ result:", result);
-    //     return result;
-    // }
 
     public async getDates(query: TheaterQueryType) {
         const dates = await this.dateRepository

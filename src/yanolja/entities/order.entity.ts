@@ -5,26 +5,6 @@ import { Theater } from "./theater.entity";
 
 @Entity("yanolja_order")
 export class Order {
-    /**
-     * old entity
-     */
-    // @PrimaryGeneratedColumn({ type: "bigint", comment: "주문번호 인덱스" })
-    // id: number;
-
-    // @IsString()
-    // @IsOptional()
-    // @Column({ type: "varchar", nullable: false, comment: "주문번호" })
-    // orderNum: string;
-
-    // @ManyToOne(() => Seat, (seat) => seat.orders)
-    // seat: Seat;
-
-    // @ManyToOne(() => Date, (date) => date.orders)
-    // date: Date;
-
-    /**
-     * new entity
-     */
     @PrimaryGeneratedColumn({ type: "bigint", comment: "주문번호 인덱스" })
     id: number;
 

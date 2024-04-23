@@ -5,51 +5,6 @@ import { Row } from "./row.entity";
 
 @Entity("yanolja_seat")
 export class Seat {
-    /**
-     * old entity
-     */
-    // @PrimaryGeneratedColumn({ type: "bigint", comment: "좌석 인덱스" })
-    // id: number;
-
-    // @IsString()
-    // @IsOptional()
-    // @Column({ type: "varchar", nullable: true, comment: "열 이름" })
-    // rowName: string;
-
-    // @IsString()
-    // @IsOptional()
-    // @Column({ type: "varchar", nullable: true, comment: "좌석 이름" })
-    // name: string;
-
-    // @IsBoolean()
-    // @IsOptional()
-    // @Column({
-    //     type: "bool",
-    //     nullable: true,
-    //     default: 0,
-    //     comment: "장애인석 여부 0: 비장애인석 / 1: 장애인석",
-    // })
-    // isDisabled: boolean;
-
-    // @IsNumber()
-    // @IsOptional()
-    // @Column({
-    //     type: "tinyint",
-    //     nullable: true,
-    //     comment: "상태 0: 좌석 없음 / 1: 예약 가능 / 2: 예약 불가 / 3: 선택 불가",
-    //     default: 1,
-    // })
-    // state: number;
-
-    // @ManyToOne(() => Theater, (theater) => theater.seats)
-    // theater: Theater;
-
-    // @OneToMany(() => Order, (order) => order.seat)
-    // orders: Order[];
-
-    /**
-     * new entity
-     */
     @PrimaryGeneratedColumn({ type: "bigint", comment: "좌석 인덱스" })
     id: number;
 

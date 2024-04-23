@@ -53,27 +53,6 @@ export type dateQueryType = {
 export class TheaterController {
     constructor(private readonly theaterService: TheaterService) {}
 
-    /** ============================================================================
-     * old function
-     */
-    // @Get("/dates/:theaterCode")
-    // async getDates(@Param("theaterCode") theaterCode: string) {
-    //     return await this.theaterService.getDates(theaterCode);
-    // }
-
-    // @Get("/times")
-    // async getTimes(@Query() query: dateQueryType) {
-    //     return await this.theaterService.getTimes(query);
-    // }
-
-    // @Get("/seats/:theaterCode")
-    // async getSeats(@Param("theaterCode") theaterCode: string) {
-    //     return await this.theaterService.getSeats(theaterCode);
-    // }
-    /**
-     * ============================================================================
-     */
-
     @Post("/insertTheaterInfos")
     public async insertTheaterInfos(@Body() body: InsertTheaterBodyType) {
         return await this.theaterService.insertTheaterInfos(body);
@@ -100,19 +79,16 @@ export class TheaterController {
     }
 
     @Get("/dates")
-    // async getDates(@Param("theaterId", new ParseIntPipe()) theaterId: number) {
     async getDates(@Query() query: TheaterQueryType) {
         return await this.theaterService.getDates(query);
     }
 
     @Get("/times")
-    // async getTimes(@Param("dateId", new ParseIntPipe()) dateId: number) {
     async getTimes(@Query() query: DateQueryType) {
         return await this.theaterService.getTimes(query);
     }
 
     @Get("/seats")
-    // async getSeats(@Param("timeId", new ParseIntPipe()) timeId: number) {
     async getSeats(@Query() query: TimeQueryType) {
         return await this.theaterService.getSeats(query);
     }
