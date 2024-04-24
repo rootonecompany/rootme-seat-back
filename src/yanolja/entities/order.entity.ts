@@ -9,7 +9,7 @@ export class Order {
     id: number;
 
     @IsString()
-    @Column({ type: "varchar", comment: "주문번호" })
+    @Column({ type: "varchar", comment: "주문번호", unique: true })
     orderNum: string;
 
     @IsString()
@@ -24,9 +24,9 @@ export class Order {
     @Column({ type: "tinyint", comment: "예매할 좌석 수" })
     count: number;
 
-    @OneToOne(() => Theater)
+    @OneToMany(() => Theater, (theater) => theater.order)
     @JoinColumn({ name: "theaterId" }) // 1. foreignKey
-    theater: Theater;
+    theaters: Theater[];
 
     @Column() // 2. create column for foreignKey
     theaterId: number;

@@ -1,5 +1,5 @@
 import { IsOptional, IsString } from "class-validator";
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Date } from "./date.entity";
 import { Order } from "./order.entity";
 
@@ -33,7 +33,7 @@ export class Theater {
     @Column({ type: "varchar", nullable: true, comment: "공연 제목" })
     title: string;
 
-    @OneToOne(() => Order)
+    @ManyToOne(() => Order, (order) => order.theaters)
     order: Order;
 
     @OneToMany(() => Date, (date) => date.theater)

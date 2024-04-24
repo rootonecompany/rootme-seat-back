@@ -77,16 +77,16 @@ export class OrderService {
             return {};
         }
 
-        const dates = returnMyOrder.theater.dates;
+        const dates = returnMyOrder.theaters[0].dates;
         const times = dates.flatMap((date) => date.times);
 
         return {
             orderNum: returnMyOrder.orderNum,
             userName: returnMyOrder.name,
             userPhone: returnMyOrder.phone,
-            theaterName: returnMyOrder.theater.name,
-            theaterLocation: returnMyOrder.theater.location,
-            theaterTitle: returnMyOrder.theater.title,
+            theaterName: returnMyOrder.theaters[0].name,
+            theaterLocation: returnMyOrder.theaters[0].location,
+            theaterTitle: returnMyOrder.theaters[0].title,
             date: dates.map((date) => date.date).toString(),
             time: times.map((time) => time.time).toString(),
             seats: times.flatMap((time) =>
@@ -112,7 +112,7 @@ export class OrderService {
                 .setParameter("theaterCode", body.theaterCode)
                 .getRawOne();
 
-            body.theaterId = theaterId;
+            body.theaterId = theaterId.id;
 
             const execute = await queryRunner.manager
                 .createQueryBuilder()
