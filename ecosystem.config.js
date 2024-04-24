@@ -3,7 +3,7 @@ module.exports = {
         {
             name: "seat-rootme-back",
             script: "npm",
-            args: "run start:dev",
+            args: "run start:prod",
             instance: 1,
             watch: true,
             env: {
