@@ -26,7 +26,7 @@ export class OrderService {
 
             return order;
         } catch (error) {
-            throw new NotAcceptableException("잘못된 주문번호 입니다!");
+            throw new NotAcceptableException("잘못된 주문번호 입니다.");
         }
     }
 
