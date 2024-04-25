@@ -74,7 +74,7 @@ export class OrderService {
             .getOne();
 
         if (!returnMyOrder) {
-            return {};
+            return null;
         }
 
         const theater = returnMyOrder.theater;
