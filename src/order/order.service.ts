@@ -75,7 +75,7 @@ export class OrderService {
 
         if (!returnMyOrder) {
             return {
-                result: "fail",
+                result: false,
             };
         }
 
@@ -84,7 +84,7 @@ export class OrderService {
         const times = dates.flatMap((date) => date.times);
 
         return {
-            result: "success",
+            result: true,
             orderNum: returnMyOrder.orderNum,
             userName: returnMyOrder.name,
             userPhone: returnMyOrder.phone,
