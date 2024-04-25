@@ -73,6 +73,10 @@ export class OrderService {
             .setParameter("theaterCode", body.theaterCode)
             .getOne();
 
+        if (!returnMyOrder) {
+            return {};
+        }
+
         const theater = returnMyOrder.theater;
         const dates = theater.dates;
         const times = dates.flatMap((date) => date.times);
