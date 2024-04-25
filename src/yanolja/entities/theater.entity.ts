@@ -1,5 +1,5 @@
 import { IsOptional, IsString } from "class-validator";
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Date } from "./date.entity";
 import { Order } from "./order.entity";
 

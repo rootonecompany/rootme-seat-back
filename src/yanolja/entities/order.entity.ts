@@ -1,5 +1,5 @@
 import { IsString } from "class-validator";
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Seat } from "./seat.entity";
 import { Theater } from "./theater.entity";
 
@@ -25,7 +25,7 @@ export class Order {
     count: number;
 
     @OneToMany(() => Theater, (theater) => theater.order)
-    @JoinColumn({ name: "theaterId" }) // 1. foreignKey
+    @JoinColumn({ name: "theaterId", referencedColumnName: "id" }) // 1. foreignKey
     theaters: Theater[];
 
     @Column() // 2. create column for foreignKey
