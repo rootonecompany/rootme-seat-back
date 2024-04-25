@@ -33,8 +33,8 @@ export class OrderService {
     public async getMyOrder(body: MyOrderBodyType) {
         const returnMyOrder = await this.orderRepository
             .createQueryBuilder("order")
-            .leftJoinAndSelect("order.theater", "theater")
-            .leftJoinAndSelect("theater.dates", "dates")
+            .leftJoinAndSelect("order.theaters", "theaters")
+            .leftJoinAndSelect("theaters.dates", "dates")
             .leftJoinAndSelect("dates.times", "times")
             .leftJoinAndSelect("times.rows", "rows")
             .leftJoinAndSelect("rows.seats", "seats")
@@ -42,10 +42,10 @@ export class OrderService {
                 "order.orderNum",
                 "order.name",
                 "order.phone",
-                "theater.name",
-                "theater.posterUrl",
-                "theater.location",
-                "theater.title",
+                "theaters.name",
+                "theaters.posterUrl",
+                "theaters.location",
+                "theaters.title",
                 "dates.date",
                 "times.time",
                 "rows.name",
@@ -68,7 +68,7 @@ export class OrderService {
                     .from(Theater, "theater")
                     .where("theater.theaterCode = :theaterCode")
                     .getQuery();
-                return "theater.id = " + subQuery;
+                return "theaters.id = " + subQuery;
             })
             .setParameter("theaterCode", body.theaterCode)
             .getOne();
