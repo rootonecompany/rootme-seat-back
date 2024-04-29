@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Put, Query } from "@nestjs/common";
 import { TheaterService } from "./theater.service";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
 
 export type InsertTheaterBodyType = {
     theaterCode: string;
@@ -60,6 +60,34 @@ export class TheaterController {
         summary: "소극장 정보 저장",
         description: "소극장 정보 저장",
     })
+    @ApiConsumes("application/json")
+    @ApiBody({
+        schema: {
+            type: "object",
+            properties: {
+                theaterCode: {
+                    type: "string",
+                    description: "극장 코드",
+                    example: "0000001",
+                },
+                name: {
+                    type: "string",
+                    description: "극장 이름",
+                    example: "서울 상상나라극장",
+                },
+                location: {
+                    type: "string",
+                    description: "극장 위치",
+                    example: "서울시 광진구 능동로216, 서울상상나라 지하 1층",
+                },
+                size: {
+                    type: "string",
+                    description: "극장 규모 (소극장)",
+                    example: "소극장",
+                },
+            },
+        },
+    })
     public async insertTheaterInfos(@Body() body: InsertTheaterBodyType) {
         return await this.theaterService.insertTheaterInfos(body);
     }
@@ -105,6 +133,12 @@ export class TheaterController {
         summary: "소극장의 예매할 수 있는 날짜 호출",
         description: "소극장의 예매할 수 있는 날짜 호출",
     })
+    @ApiQuery({
+        name: "theaterId",
+        required: true,
+        example: 1,
+        type: String,
+    })
     async getDates(@Query() query: TheaterQueryType) {
         return await this.theaterService.getDates(query);
     }
@@ -113,6 +147,12 @@ export class TheaterController {
     @ApiOperation({
         summary: "소극장의 예매할 수 있는 시간 호출",
         description: "소극장의 예매할 수 있는 시간 호출",
+    })
+    @ApiQuery({
+        name: "dateId",
+        required: true,
+        example: 1,
+        type: String,
     })
     async getTimes(@Query() query: DateQueryType) {
         return await this.theaterService.getTimes(query);
@@ -123,6 +163,12 @@ export class TheaterController {
         summary: "소극장의 예매할 수 있는 좌석 호출",
         description: "소극장의 예매할 수 있는 좌석 호출",
     })
+    @ApiQuery({
+        name: "timeId",
+        required: true,
+        example: 1,
+        type: String,
+    })
     async getSeats(@Query() query: TimeQueryType) {
         return await this.theaterService.getSeats(query);
     }
@@ -131,6 +177,12 @@ export class TheaterController {
     @ApiOperation({
         summary: "좌석 예매",
         description: "좌석 예매",
+    })
+    @ApiQuery({
+        name: "orderNum",
+        required: true,
+        example: 1,
+        type: String,
     })
     async updateSeats(@Body() body: UpdateSeatBodyType) {
         return await this.theaterService.updateSeats(body);
