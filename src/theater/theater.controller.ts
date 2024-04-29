@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Put, Query } from "@nestjs/common";
 import { TheaterService } from "./theater.service";
-import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
 
 export type InsertTheaterBodyType = {
     theaterCode: string;
@@ -29,11 +29,12 @@ export type InsertSeatBodyType = {
 };
 
 export type TheaterQueryType = {
-    theaterId: number;
+    theaterCode: string;
 };
 
 export type DateQueryType = {
     dateId: number;
+    count?: number;
 };
 
 export type TimeQueryType = {
@@ -134,7 +135,7 @@ export class TheaterController {
         description: "소극장의 예매할 수 있는 날짜 호출",
     })
     @ApiQuery({
-        name: "theaterId",
+        name: "theaterCode",
         required: true,
         example: 1,
         type: String,
