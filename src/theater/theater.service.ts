@@ -233,7 +233,16 @@ export class TheaterService {
         const dates = await this.dateRepository
             .createQueryBuilder("date")
             .select(["date.id", "date.date", "date.state"])
-            .where("date.theaterId = :theaterId", { theaterId: query.theaterId })
+            .where((qb) => {
+                const subQuery = qb
+                    .subQuery()
+                    .select("theater.id")
+                    .from(Theater, "theater")
+                    .where("theater.theaterCode = :theaterCode")
+                    .getQuery();
+                return "date.theaterId = " + subQuery;
+            })
+            .setParameter("theaterCode", query.theaterCode)
             .getMany();
 
         return dates;
@@ -243,8 +252,18 @@ export class TheaterService {
         const times = await this.timeRepository
             .createQueryBuilder("time")
             .select(["time.id", "time.time"])
+            .addSelect((qb) => {
+                const subQuery = qb
+                    .subQuery()
+                    .select("count(seats.id)")
+                    .from(Row, "row")
+                    .leftJoin("row.seats", "seats")
+                    .where("row.timeId = time.id")
+                    .andWhere("seats.state = 1");
+                return subQuery;
+            }, "count")
             .where("time.dateId = :dateId", { dateId: query.dateId })
-            .getMany();
+            .getRawMany();
 
         return times;
     }
@@ -331,6 +350,7 @@ export class TheaterService {
         try {
             const updateSeats = await this.seatRepository
                 .createQueryBuilder()
+                .setLock("pessimistic_write")
                 .update(Seat)
                 .set({
                     orderId: () => {
