@@ -30,6 +30,7 @@ export type InsertSeatBodyType = {
 
 export type TheaterQueryType = {
     theaterCode: string;
+    orderNum: string;
 };
 
 export type DateQueryType = {
