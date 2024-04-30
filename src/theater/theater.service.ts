@@ -230,9 +230,11 @@ export class TheaterService {
     }
 
     public async getDates(query: TheaterQueryType) {
-        const dates = await this.dateRepository
-            .createQueryBuilder("date")
-            .select(["date.id", "date.date", "date.state"])
+        const returnDates = await this.theaterRepository
+            .createQueryBuilder("theater")
+            .leftJoinAndSelect("theater.orders", "orders")
+            .leftJoinAndSelect("theater.dates", "dates")
+            .select(["theater.id", "dates.id", "dates.date", "dates.state", "orders.count"])
             .where((qb) => {
                 const subQuery = qb
                     .subQuery()
@@ -240,16 +242,42 @@ export class TheaterService {
                     .from(Theater, "theater")
                     .where("theater.theaterCode = :theaterCode")
                     .getQuery();
-                return "date.theaterId = " + subQuery;
+                return "dates.theaterId = " + subQuery;
             })
             .setParameter("theaterCode", query.theaterCode)
-            .getMany();
+            .andWhere("orders.orderNum = :orderNum")
+            .setParameter("orderNum", query.orderNum)
+            .getOne();
 
-        return dates;
+        return {
+            count: Number(returnDates.orders.flatMap((order) => order.count).toString()),
+            dates: returnDates.dates,
+        };
     }
 
     public async getTimes(query: DateQueryType) {
-        const times = await this.timeRepository
+        // group by query
+        // const times = await this.theaterRepository
+        //     .createQueryBuilder("theater")
+        //     .leftJoinAndSelect("theater.dates", "dates")
+        //     .leftJoinAndSelect("dates.times", "times")
+        //     .leftJoinAndSelect("times.rows", "rows")
+        //     .leftJoinAndSelect("rows.seats", "seats")
+        //     .select([
+        //         "ANY_VALUE(theater.id) as theater_id",
+        //         "ANY_VALUE(dates.id) as dates_id",
+        //         "ANY_VALUE(times.id) as times_id",
+        //         "ANY_VALUE(times.time) as times_time",
+        //         "ANY_VALUE(rows.id) as rows_id",
+        //         "count(seats.id) as count",
+        //     ])
+        //     .where("times.dateId = :dateId", { dateId: query.dateId })
+        //     .andWhere("seats.state = 1")
+        //     .groupBy("times.id")
+        //     .getRawMany();
+
+        // select subQuery
+        const returnTimes = await this.timeRepository
             .createQueryBuilder("time")
             .select(["time.id", "time.time"])
             .addSelect((qb) => {
@@ -259,13 +287,32 @@ export class TheaterService {
                     .from(Row, "row")
                     .leftJoin("row.seats", "seats")
                     .where("row.timeId = time.id")
-                    .andWhere("seats.state = 1");
+                    .andWhere("seats.state = 1")
+                    .andWhere("seats.isDisabled = 0");
                 return subQuery;
-            }, "count")
+            }, "enabled_count")
+            .addSelect((qb) => {
+                const subQuery = qb
+                    .subQuery()
+                    .select("count(seats.id)")
+                    .from(Row, "row")
+                    .leftJoin("row.seats", "seats")
+                    .where("row.timeId = time.id")
+                    .andWhere("seats.state = 1")
+                    .andWhere("seats.isDisabled = 1");
+                return subQuery;
+            }, "disabled_count")
             .where("time.dateId = :dateId", { dateId: query.dateId })
             .getRawMany();
 
-        return times;
+        return returnTimes.map((time) => {
+            return {
+                id: time.time_id,
+                time: time.time_time,
+                enabled_count: time.enabled_count,
+                disabled_count: time.disabled_count,
+            };
+        });
     }
 
     public async getSeats(query: TimeQueryType) {
