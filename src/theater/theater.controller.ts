@@ -138,7 +138,13 @@ export class TheaterController {
     @ApiQuery({
         name: "theaterCode",
         required: true,
-        example: 1,
+        example: "0000001",
+        type: String,
+    })
+    @ApiQuery({
+        name: "orderNum",
+        required: true,
+        example: "2",
         type: String,
     })
     async getDates(@Query() query: TheaterQueryType) {
