@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Get, Patch, Post, Put, Query } from "@nestjs/common";
 import { TheaterService } from "./theater.service";
 import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
 
@@ -181,16 +181,39 @@ export class TheaterController {
         return await this.theaterService.getSeats(query);
     }
 
-    @Put("/seats")
+    @Post("/seats")
     @ApiOperation({
         summary: "좌석 예매",
         description: "좌석 예매",
     })
-    @ApiQuery({
-        name: "orderNum",
-        required: true,
-        example: 1,
-        type: String,
+    // @ApiQuery({
+    //     name: "orderNum",
+    //     required: true,
+    //     example: 1,
+    //     type: String,
+    // })
+    // @ApiQuery({
+    //     name: "seatIds",
+    //     required: true,
+    //     example: [1, 2, 3, 4, 5],
+    //     type: [Number],
+    // })
+    @ApiBody({
+        schema: {
+            type: "object",
+            properties: {
+                orderNum: {
+                    type: "string",
+                    description: "주문 번호",
+                    example: "2",
+                },
+                seatIds: {
+                    type: "Array[number]",
+                    description: "좌석 아이디 값",
+                    example: "[1, 2, 3, 4, 5]",
+                },
+            },
+        },
     })
     async updateSeats(@Body() body: UpdateSeatBodyType) {
         return await this.theaterService.updateSeats(body);
