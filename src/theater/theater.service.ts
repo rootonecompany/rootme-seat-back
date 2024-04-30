@@ -380,10 +380,6 @@ export class TheaterService {
 
         const { orderNum, seatIds } = body;
 
-        const queryRunner = this.db.createQueryRunner();
-        await queryRunner.connect();
-        await queryRunner.startTransaction();
-
         const availableSeats = await this.seatRepository
             .createQueryBuilder()
             .whereInIds(seatIds)
@@ -393,6 +389,10 @@ export class TheaterService {
         if (isOrders) {
             throw new NotAcceptableException("이미 예약된 좌석입니다.");
         }
+
+        const queryRunner = this.db.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
         try {
             const updateSeats = await this.seatRepository
