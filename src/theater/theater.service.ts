@@ -331,29 +331,29 @@ export class TheaterService {
                 "seats.state",
             ])
             .where("time.id = :timeId", { timeId: query.timeId })
-            .getMany();
+            .getOne();
 
-        const times = searchTimes.map((time) => {
-            return {
-                id: time.id,
-                time: time.time,
-                rows: time.rows.map((row) => {
-                    return {
-                        id: row.id,
-                        name: row.name,
-                        seats: row.seats.flatMap((seat) => {
-                            const temp = {
-                                id: seat.id,
-                                name: seat.name,
-                                state: seat.state,
-                            };
-                            seat.isDisabled === true ? (temp["isDisabled"] = true) : undefined;
-                            return temp;
-                        }),
-                    };
-                }),
-            };
-        });
+        const times = {
+            id: searchTimes.id,
+            time: searchTimes.time,
+            rows: searchTimes.rows.map((row) => {
+                return {
+                    id: row.id,
+                    name: row.name,
+                    seats: row.seats.flatMap((seat) => {
+                        const temp = {
+                            id: seat.id,
+                            name: seat.name,
+                            state: seat.state,
+                        };
+
+                        seat.isDisabled === true ? (temp["isDisabled"] = true) : undefined;
+
+                        return temp;
+                    }),
+                };
+            }),
+        };
 
         return times;
     }
