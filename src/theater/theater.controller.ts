@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { TheaterService } from "./theater.service";
 import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
 
