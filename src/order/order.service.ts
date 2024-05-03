@@ -31,9 +31,9 @@ export class OrderService {
     }
 
     public async getMyOrder(body: MyOrderBodyType) {
-        const returnMyOrder = await this.orderRepository
-            .createQueryBuilder("order")
-            .leftJoinAndSelect("order.theater", "theater")
+        const returnMyOrder = await this.theaterRepository
+            .createQueryBuilder("theater")
+            .leftJoinAndSelect("theater.orders", "orders")
             .leftJoinAndSelect("theater.dates", "dates")
             .leftJoinAndSelect("dates.times", "times")
             .leftJoinAndSelect("times.rows", "rows")
@@ -43,15 +43,17 @@ export class OrderService {
                 "theater.posterUrl",
                 "theater.location",
                 "theater.title",
-                "order.orderNum",
-                "order.name",
-                "order.phone",
+                "orders.orderNum",
+                "orders.name",
+                "orders.phone",
                 "dates.date",
                 "times.time",
                 "rows.name",
                 "seats.name",
             ])
-            .where((qb) => {
+            .where("orders.orderNum = :orderNum")
+            .setParameter("orderNum", body.orderNum)
+            .andWhere((qb) => {
                 const subQuery = qb
                     .subQuery()
                     .select("order.id")
@@ -61,17 +63,9 @@ export class OrderService {
                 return "seats.orderId = " + subQuery;
             })
             .setParameter("orderNum", body.orderNum)
-            .andWhere((qb) => {
-                const subQuery = qb
-                    .subQuery()
-                    .select("theater.id")
-                    .from(Theater, "theater")
-                    .where("theater.theaterCode = :theaterCode")
-                    .getQuery();
-                return "theater.id = " + subQuery;
-            })
-            .setParameter("theaterCode", body.theaterCode)
             .getOne();
+
+        // return returnMyOrder;
 
         if (!returnMyOrder) {
             return {
@@ -79,26 +73,48 @@ export class OrderService {
             };
         }
 
-        const theater = returnMyOrder.theater;
-        const dates = theater.dates;
-        const times = dates.flatMap((date) => date.times);
+        const orders = returnMyOrder.orders;
+        const dates = returnMyOrder.dates;
+        const times = dates.find((date) => date.times).times;
 
         return {
             result: true,
-            orderNum: returnMyOrder.orderNum,
-            userName: returnMyOrder.name,
-            userPhone: returnMyOrder.phone,
-            theaterName: returnMyOrder.theater.name,
-            theaterLocation: returnMyOrder.theater.location,
-            theaterTitle: returnMyOrder.theater.title,
-            date: dates.map((date) => date.date).toString(),
-            time: times.map((time) => time.time).toString(),
+            theaterName: returnMyOrder.name,
+            theaterLocation: returnMyOrder.location,
+            theaterTitle: returnMyOrder.title,
+            theaterPoster: returnMyOrder.posterUrl,
+            orderNum: orders.flatMap((order) => order.orderNum).toString(),
+            name: orders.flatMap((order) => order.name).toString(),
+            phone: orders.flatMap((order) => order.phone).toString(),
+            date: returnMyOrder.dates.flatMap((date) => date.date).toString(),
+            time: times.flatMap((time) => time.time).toString(),
             seats: times.flatMap((time) =>
                 time.rows.flatMap((row) =>
-                    row.seats.flatMap((seat) => row.name + " " + seat.name + "번"),
+                    row.seats.flatMap((seat) => `${row.name} ${seat.name}번`),
                 ),
             ),
         };
+
+        // const theater = returnMyOrder.theater;
+        // const dates = theater.dates;
+        // const times = dates.flatMap((date) => date.times);
+
+        // return {
+        //     result: true,
+        //     orderNum: returnMyOrder.orderNum,
+        //     userName: returnMyOrder.name,
+        //     userPhone: returnMyOrder.phone,
+        //     theaterName: returnMyOrder.theater.name,
+        //     theaterLocation: returnMyOrder.theater.location,
+        //     theaterTitle: returnMyOrder.theater.title,
+        //     date: dates.map((date) => date.date).toString(),
+        //     time: times.map((time) => time.time).toString(),
+        //     seats: times.flatMap((time) =>
+        //         time.rows.flatMap((row) =>
+        //             row.seats.flatMap((seat) => row.name + " " + seat.name + "번"),
+        //         ),
+        //     ),
+        // };
 
         // const returnMyOrder2 = await this.theaterRepository
         //     .createQueryBuilder("theater")
