@@ -95,8 +95,6 @@ export class OrderService {
     }
 
     private async postMyOrder(body: MyOrderBodyType) {
-        let result: any;
-
         const queryRunner = this.db.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
@@ -111,14 +109,12 @@ export class OrderService {
 
             body.theaterId = theaterId.id;
 
-            const execute = await queryRunner.manager
+            await queryRunner.manager
                 .createQueryBuilder()
                 .insert()
                 .into(Order, ["orderNum", "theaterId", "name", "phone", "count"])
                 .values(body)
                 .execute();
-
-            result = execute;
 
             await queryRunner.commitTransaction();
         } catch (error) {
@@ -127,7 +123,7 @@ export class OrderService {
             await queryRunner.release();
         }
 
-        return result;
+        return await this.getMyOrder(body);
     }
 
     public async isOrder(body: MyOrderBodyType) {
