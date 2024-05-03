@@ -65,8 +65,6 @@ export class OrderService {
             .setParameter("orderNum", body.orderNum)
             .getOne();
 
-        // return returnMyOrder;
-
         if (!returnMyOrder) {
             return {
                 result: false,
@@ -94,94 +92,6 @@ export class OrderService {
                 ),
             ),
         };
-
-        // const theater = returnMyOrder.theater;
-        // const dates = theater.dates;
-        // const times = dates.flatMap((date) => date.times);
-
-        // return {
-        //     result: true,
-        //     orderNum: returnMyOrder.orderNum,
-        //     userName: returnMyOrder.name,
-        //     userPhone: returnMyOrder.phone,
-        //     theaterName: returnMyOrder.theater.name,
-        //     theaterLocation: returnMyOrder.theater.location,
-        //     theaterTitle: returnMyOrder.theater.title,
-        //     date: dates.map((date) => date.date).toString(),
-        //     time: times.map((time) => time.time).toString(),
-        //     seats: times.flatMap((time) =>
-        //         time.rows.flatMap((row) =>
-        //             row.seats.flatMap((seat) => row.name + " " + seat.name + "번"),
-        //         ),
-        //     ),
-        // };
-
-        // const returnMyOrder2 = await this.theaterRepository
-        //     .createQueryBuilder("theater")
-        //     .leftJoinAndSelect("theater.dates", "dates")
-        //     .leftJoinAndSelect("theater.orders", "orders")
-        //     .leftJoinAndSelect("dates.times", "times")
-        //     .leftJoinAndSelect("times.rows", "rows")
-        //     .leftJoinAndSelect("rows.seats", "seats")
-        //     .select([
-        //         "theater.name",
-        //         "theater.posterUrl",
-        //         "theater.location",
-        //         "theater.title",
-        //         "orders.orderNum",
-        //         "orders.name",
-        //         "orders.phone",
-        //         "dates.date",
-        //         "times.time",
-        //         "rows.name",
-        //         "seats.name",
-        //     ])
-        //     .where((qb) => {
-        //         const subQuery = qb
-        //             .subQuery()
-        //             .select("order.id")
-        //             .from(Order, "order")
-        //             .where("order.orderNum = :orderNum")
-        //             .getQuery();
-        //         return "seats.orderId = " + subQuery;
-        //     })
-        //     .setParameter("orderNum", body.orderNum)
-        //     .andWhere((qb) => {
-        //         const subQuery = qb
-        //             .subQuery()
-        //             .select("theater.id")
-        //             .from(Theater, "theater")
-        //             .where("theater.theaterCode = :theaterCode")
-        //             .getQuery();
-        //         return "theater.id = " + subQuery;
-        //     })
-        //     .setParameter("theaterCode", body.theaterCode)
-        //     .getOne();
-
-        if (!returnMyOrder) {
-            return {};
-        }
-
-        return returnMyOrder;
-
-        // const dates = returnMyOrder.theater.dates;
-        // const times = dates.flatMap((date) => date.times);
-
-        // return {
-        //     orderNum: returnMyOrder.orderNum,
-        //     userName: returnMyOrder.name,
-        //     userPhone: returnMyOrder.phone,
-        //     theaterName: returnMyOrder.theater.name,
-        //     theaterLocation: returnMyOrder.theater.location,
-        //     theaterTitle: returnMyOrder.theater.title,
-        //     date: dates.map((date) => date.date).toString(),
-        //     time: times.map((time) => time.time).toString(),
-        //     seats: times.flatMap((time) =>
-        //         time.rows.flatMap((row) =>
-        //             row.seats.flatMap((seat) => row.name + " " + seat.name + "번"),
-        //         ),
-        //     ),
-        // };
     }
 
     private async postMyOrder(body: MyOrderBodyType) {
