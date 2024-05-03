@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { OrderService } from "./order.service";
-import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
 
 export type OrderQueryType = {
     orderNum: string;
@@ -61,6 +61,12 @@ export class OrderController {
     @ApiOperation({
         summary: "인보이스",
         description: "주문번호로 예매된 모든 값 호출",
+    })
+    @ApiQuery({
+        name: "orderNum",
+        required: true,
+        example: "1",
+        type: String,
     })
     public async getMyOrder(@Query() query: OrderQueryType) {
         return await this.orderService.isOrder(query);
