@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { OrderService } from "./order.service";
 import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
+import { OrderInfoDto } from "src/yanolja/dtos/orderInfo.dto";
 
 export type OrderQueryType = {
     orderNum: string;
@@ -70,5 +71,67 @@ export class OrderController {
     })
     public async getMyOrder(@Query() query: OrderQueryType) {
         return await this.orderService.isOrder(query);
+    }
+
+    @Post("/orderInfo")
+    @ApiOperation({
+        summary: "주문자 정보",
+        description: "각 채널 주문자 정보",
+    })
+    @ApiConsumes("application/json")
+    @ApiBody({
+        schema: {
+            type: "object",
+            properties: {
+                name: {
+                    type: "string",
+                    description: "주문자명",
+                    example: "박아무개",
+                },
+                phoneNumber: {
+                    type: "string",
+                    description: "주문자 폰번호",
+                    example: "01012341234",
+                },
+                pinNumber: {
+                    type: "string",
+                    description: "핀번호",
+                    example: "HD129AGFK182AFB",
+                },
+                channel: {
+                    type: "string",
+                    description: "채널",
+                    example: "티몬",
+                },
+                goodsCode: {
+                    type: "string",
+                    description: "상품코드",
+                    example: "300000",
+                },
+                goodsName: {
+                    type: "string",
+                    description: "상품명",
+                    example: "번개맨와 배트맨이 싸우면 누가 이길까?",
+                },
+                date: {
+                    type: "Date",
+                    description: "구매일자",
+                    example: "2024-01-01 12:31:42",
+                },
+                validStartAt: {
+                    type: "Date",
+                    description: "유효기간 시작일",
+                    example: "2024-01-15",
+                },
+                validEndAt: {
+                    type: "Date",
+                    description: "유효기간 시작일",
+                    example: "2024-01-30",
+                },
+            },
+        },
+    })
+    public async saveOrderInfo(@Body() orderInfoDto: OrderInfoDto) {
+        return await this.orderService.saveOrderInfo(orderInfoDto);
     }
 }
