@@ -1,13 +1,17 @@
-import { Injectable, NotAcceptableException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotAcceptableException } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { Order } from "src/yanolja/entities/order.entity";
 import { DataSource, Repository } from "typeorm";
 import { MyOrderBodyType, OrderQueryType } from "./order.controller";
 import { Theater } from "src/yanolja/entities/theater.entity";
+import { OrderInfo } from "src/yanolja/entities/orderInfo.entity";
+import { OrderInfoDto } from "src/yanolja/dtos/orderInfo.dto";
 
 @Injectable()
 export class OrderService {
     constructor(
+        @InjectRepository(OrderInfo)
+        private readonly orderInfoRepository: Repository<OrderInfo>,
         @InjectRepository(Order)
         private readonly orderRepository: Repository<Order>,
         @InjectRepository(Theater)
@@ -139,4 +143,53 @@ export class OrderService {
 
         return await this.postMyOrder(body);
     }
+
+    public async saveOrderInfo(orderInfoDto: OrderInfoDto) {
+        let execute: any;
+        try {
+            execute = await this.orderInfoRepository
+                .createQueryBuilder("orderInfo")
+                .insert()
+                .into(OrderInfo, [
+                    "name",
+                    "phoneNumber",
+                    "pinNumber",
+                    "channel",
+                    "goodsCode",
+                    "goodsName",
+                    "date",
+                    "validStartAt",
+                    "validEndAt",
+                ])
+                .values(orderInfoDto)
+                .execute();
+        } catch (error: any) {
+            if (error.errno === 1062) {
+                throw new BadRequestException("핀번호가 중복된 주문정보입니다.", {
+                    cause: new Error(),
+                    description: error.code,
+                });
+            }
+        }
+
+        return execute;
+    }
+
+    private dateFormat = (date: Date) => {
+        let month = (date.getMonth() + 1).toString();
+        let day = date.getDate().toString();
+        let hour = date.getHours().toString();
+        let minute = date.getMinutes().toString();
+        let second = date.getSeconds().toString();
+
+        month = Number(month) >= 10 ? month : "0" + month;
+        day = Number(day) >= 10 ? day : "0" + day;
+        hour = Number(hour) >= 10 ? hour : "0" + hour;
+        minute = Number(minute) >= 10 ? minute : "0" + minute;
+        second = Number(second) >= 10 ? second : "0" + second;
+
+        return (
+            date.getFullYear() + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second
+        );
+    };
 }
