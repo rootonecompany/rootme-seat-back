@@ -172,6 +172,11 @@ export class OrderService {
             }
         }
 
+        if (execute.identifiers) {
+            return {
+                result: "success",
+            };
+        }
         return execute;
     }
 
