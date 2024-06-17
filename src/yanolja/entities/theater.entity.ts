@@ -2,6 +2,7 @@ import { IsOptional, IsString } from "class-validator";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Date } from "./date.entity";
 import { Order } from "./order.entity";
+import { OrderInfo } from "./orderInfo.entity";
 
 @Entity("yanolja_theater")
 export class Theater {
@@ -32,6 +33,9 @@ export class Theater {
     @IsString()
     @Column({ type: "varchar", nullable: true, comment: "공연 제목" })
     title: string;
+
+    @OneToMany(() => OrderInfo, (orderInfo) => orderInfo.theater)
+    orderInfos: OrderInfo[];
 
     @OneToMany(() => Order, (order) => order.theater)
     orders: Order[];
