@@ -160,6 +160,7 @@ export class OrderService {
                     "date",
                     "validStartAt",
                     "validEndAt",
+                    "price",
                 ])
                 .values(orderInfoDto)
                 .execute();

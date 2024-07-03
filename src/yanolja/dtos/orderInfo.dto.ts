@@ -1,4 +1,4 @@
-import { IsDate, IsNotEmpty, IsString } from "class-validator";
+import { IsDate, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class OrderInfoDto {
     @IsNotEmpty()
@@ -36,4 +36,8 @@ export class OrderInfoDto {
     @IsNotEmpty()
     @IsDate()
     validEndAt: Date;
+
+    @IsNotEmpty()
+    @IsNumber()
+    price: number;
 }
