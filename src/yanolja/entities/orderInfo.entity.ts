@@ -44,6 +44,12 @@ export class OrderInfo {
     @Column({ type: "date", comment: "유효기간 종료일" })
     validEndAt: Date;
 
+    @Column({ type: "tinyint", default: 1, comment: "정보상태" })
+    state: number;
+
+    @Column({ type: "int", comment: "금액" })
+    price: number;
+
     @ManyToOne(() => Theater, (theater) => theater.orderInfos)
     @JoinColumn({ name: "theaterId" }) // 1. foreignKey
     theater: Theater;
