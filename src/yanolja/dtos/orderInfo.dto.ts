@@ -37,7 +37,6 @@ export class OrderInfoDto {
     @IsDate()
     validEndAt: Date;
 
-    @IsNotEmpty()
     @IsNumber()
     price: number;
 }
