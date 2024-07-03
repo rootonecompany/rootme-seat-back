@@ -39,5 +39,5 @@ export class OrderInfoDto {
 
     @IsOptional()
     @IsNumber()
-    price: number;
+    price?: number;
 }

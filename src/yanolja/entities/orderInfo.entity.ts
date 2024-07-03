@@ -47,7 +47,7 @@ export class OrderInfo {
     @Column({ type: "tinyint", default: 1, comment: "정보상태" })
     state: number;
 
-    @Column({ type: "int", comment: "금액" })
+    @Column({ type: "int", nullable: true, default: 0, comment: "금액" })
     price: number;
 
     @ManyToOne(() => Theater, (theater) => theater.orderInfos)
