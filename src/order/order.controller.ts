@@ -128,6 +128,11 @@ export class OrderController {
                     description: "유효기간 시작일",
                     example: "2024-01-30",
                 },
+                price: {
+                    type: "number",
+                    description: "금액",
+                    example: "100000",
+                },
             },
         },
     })
