@@ -145,6 +145,7 @@ export class OrderService {
     }
 
     public async saveOrderInfo(orderInfoDto: OrderInfoDto) {
+        console.log("🚀 ~ OrderService ~ saveOrderInfo ~ orderInfoDto:", orderInfoDto);
         let execute: any;
         try {
             execute = await this.orderInfoRepository
